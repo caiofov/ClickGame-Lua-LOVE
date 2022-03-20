@@ -1,19 +1,16 @@
+
+require "gameFunctions"
+
+-- LOVE2D FUNCTIONS - - -- - - -
+
 function love.load() --runs imediately when the game loads (setups)
     MAX_RADIUS = 50
     
-    targets = {}
-    createNewTarget() --generates a new target in a random position
-
-    score = 0
-    -- timer = 0
-    health = 5
-    speed = 2
-
     -- fontsizes
     gameFont = love.graphics.newFont(40) 
     gameOverFont = love.graphics.newFont(100)
-
-    run = true --game's runnings
+    
+    configGame()
 end
 
 function love.update(dt) --game loop
@@ -35,9 +32,7 @@ function love.update(dt) --game loop
 
             end
         end
-        print(#targets)
     end
-
 end
 
 function love.draw() --draws on the screen (similar to update, but involving graphics)
@@ -54,8 +49,13 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         love.graphics.setFont(gameFont)
         love.graphics.print("Score: " .. tostring(score), 0, 0) --prints the value of score
         love.graphics.print("Health: " .. tostring(health), 0, 45)
+    
     else
-        love.graphics.print("GAME OVER :(", love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+        love.graphics.setFont(gameOverFont)
+        love.graphics.print("GAME OVER :(", 50, love.graphics.getHeight()/2 - 100)
+        
+        love.graphics.setFont(gameFont)
+        love.graphics.print("Score: " .. tostring(score), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2)
     end
 end
 
@@ -78,6 +78,7 @@ function love.mousepressed(x, y, button, istouch, pressed) --runs this function 
                     
                     table.remove(targets, key) --removes the current target from the list
                     createNewTarget() --creates a new target
+                    break
                 end
             end
 
@@ -87,23 +88,4 @@ function love.mousepressed(x, y, button, istouch, pressed) --runs this function 
         end
     end
 
-end
-
-function move(t) --moves the target
-    t.y = t.y + speed
-end
-
-function distanceBetween (x1,y1,x2,y2) --distance between two points
-    return math.sqrt(((x2-x1)^2) +((y2-y1)^2))
-end
-
-function createNewTarget() --generates new position for a new target
-    local newTarget = {}
-    newTarget.radius = math.random(20, MAX_RADIUS)
-    newTarget.x = math.random(newTarget.radius, love.graphics.getWidth() - newTarget.radius)
-    newTarget.y = -5
-    
-    newTarget.checked = false --tells if this target has already created a new one
-    
-    table.insert(targets, newTarget)
 end
