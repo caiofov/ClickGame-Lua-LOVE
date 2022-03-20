@@ -6,22 +6,21 @@ require "gameFunctions"
 function love.load() --runs imediately when the game loads (setups)
     --setting constrains
     MAX_RADIUS = 50 --max circle radius
-    --restart button coordinates
-    RESTART_X = love.graphics.getWidth()/2 - 90
-    RESTART_Y = love.graphics.getHeight()/2 + 125
     
     -- fontsizes
     gameFont = love.graphics.newFont(40) 
     gameOverFont = love.graphics.newFont(100)
 
-    configGame()
+    createButtons()
+    
+    loadMenu()
 end
 
 function love.update(dt) --game loop
-    if health <=0 then
-        configGameOver()
-    end
     if run then
+        if health <=0 then
+            configGameOver()
+        end
         for key, target in pairs(targets) do
             target.y = target.y + speed --moves the target
             
@@ -30,30 +29,41 @@ function love.update(dt) --game loop
                 table.remove(targets, key) --removes the current target
             
             elseif target.y > 3*love.graphics.getHeight()/4 and not target.check then --creating a new target for this height
-                createNewTarget()
+                createNewTarget(targets, false)
                 target.check = true
 
             end
         end
-    end
+    else --if it in the main menu screen or game over screen, both needs the falling balls background
+        updateFallingBallsBackground()
 end
 
 function love.draw() --draws on the screen (similar to update, but involving graphics)
     if run then
         changeColor()
         
-        for key, target in pairs(targets) do
-            love.graphics.circle("fill", target.x, target.y, target.radius)
-            -- "fill" -> filled | "line" -> outline 
-            -- x, y (center), radius
-        end
+        drawTargets(targets)
         
         love.graphics.setColor(1,1,1)
         love.graphics.setFont(gameFont)
         love.graphics.print("Score: " .. tostring(score), 0, 0) --prints the value of score
         love.graphics.print("Health: " .. tostring(health), 0, 45)
     
+    
+    elseif menu then -- menu screen
+        changeColor()
+        drawTargets(backgroundCircles) --background
+
+        love.graphics.setFont(gameOverFont)
+        love.graphics.print("Falling Circles", 50, love.graphics.getHeight()/2 - 100)
+        
+        drawButton(startButton)
+        
+    
     else --game over screen
+        changeColor()
+        drawTargets(backgroundCircles)
+        
         love.graphics.setColor(1,1,1)
         love.graphics.setFont(gameOverFont)
         
@@ -70,7 +80,7 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         end
         
         
-        restartButton() --drawing restart BUTTON
+        drawButton(restartButton) --drawing restart BUTTON
     end
 end
 
@@ -92,7 +102,7 @@ function love.mousepressed(x, y, button, istouch, pressed) --runs this function 
                         speed = speed + 0.1
                         
                         table.remove(targets, key) --removes the current target from the list
-                        createNewTarget() --creates a new target
+                        createNewTarget(targets, false) --creates a new target
                         break
                     end
                 end
@@ -101,11 +111,16 @@ function love.mousepressed(x, y, button, istouch, pressed) --runs this function 
                     health = health - 1
                 end
             
+        elseif menu then
+            if isOverButton(startButton, x, y) then --restarts the game
+                startButton.action()
+            end
         else
-            if isOverRestartButton(x, y) then --restarts the game
-                configGame()
+            if isOverButton(restartButton, x, y) then
+                restartButton.action()
             end
         end
     end
 
+end
 end
