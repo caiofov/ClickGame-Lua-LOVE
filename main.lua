@@ -7,8 +7,8 @@ function love.load() --runs imediately when the game loads (setups)
     --setting constrains
     MAX_RADIUS = 50 --max circle radius
     --restart button coordinates
-    RESTART_X = love.graphics.getWidth()/2 - 100
-    RESTART_Y = love.graphics.getHeight()/2 + 100
+    RESTART_X = love.graphics.getWidth()/2 - 90
+    RESTART_Y = love.graphics.getHeight()/2 + 125
 
     
     HIGHEST_SCORE = loadHighestScore()
@@ -61,21 +61,23 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         score_saved = false
         love.graphics.setColor(1,1,1)
         love.graphics.setFont(gameOverFont)
+        
         love.graphics.print("GAME OVER :(", 50, love.graphics.getHeight()/2 - 100)
         
         love.graphics.setFont(gameFont)
-        love.graphics.print("Score: " .. tostring(score), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2)
+        love.graphics.print("Score: " .. tostring(score), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 25)
         
         if score > HIGHEST_SCORE then
             changeColor()
-            love.graphics.print("New record!", love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 50)
+            love.graphics.print("New record!", love.graphics.getWidth()/2 - 130, love.graphics.getHeight()/2 + 75)
             
             if not score_saved then
-                saveHightesScore(score)
+                saveHighestScore(score)
+                score_saved = true
             end
         
         else
-            love.graphics.print("Highest score: " .. tostring(HIGHEST_SCORE), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 50)
+            love.graphics.print("Highest score: " .. tostring(HIGHEST_SCORE), love.graphics.getWidth()/2 - 170, love.graphics.getHeight()/2 + 75)
         end
         
         

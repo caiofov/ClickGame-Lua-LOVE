@@ -4,13 +4,13 @@ function configGame() --reset all variables to their initial values
     targets = {}
     createNewTarget() --generates a new target in a random position
 
-    score = 1
+    score = 0
     health = 5
     speed = 2
 
     color = newRandomColor()
 
-    run = true --game's runnings
+    run = false --game's runnings
 end
 
 function createNewTarget() --generates new position for a new target
@@ -64,7 +64,7 @@ function loadHighestScore() --loads the highest score from the file
     return tonumber(file:read("*all"))
 end
 
-function saveHightesScore(new_record) --saves the highest score
+function saveHighestScore(new_record) --saves the highest score
     local file = io.open("highest_score.txt", "w")
     file:write(new_record)
 end
