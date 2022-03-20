@@ -20,6 +20,7 @@ function createNewTarget() --generates new position for a new target
 end
 
 function configGame() --reset all variables to their initial values
+    love.mouse.setCursor() --sets cursor to default
     targets = {}
     createNewTarget() --generates a new target in a random position
 
@@ -28,4 +29,21 @@ function configGame() --reset all variables to their initial values
     speed = 2
 
     run = true --game's runnings
+end
+
+function restartButton() --draws restart button
+    love.graphics.setColor(1,1,1)
+    love.mouse.setCursor() --sets cursor to default
+    
+    if isOverRestartButton(love.mouse.getX(), love.mouse.getY()) then --hovering the button
+        love.graphics.setColor(0.5,0.8,0.8) --changes the color
+        love.mouse.setCursor(love.mouse.getSystemCursor("hand")) --sets cursor to pointer
+    end
+
+    love.graphics.print("Restart", RESTART_X, RESTART_Y)
+
+end
+
+function isOverRestartButton(x, y) -- checks if the given coordinate is inside the restart button
+    return x <= RESTART_X + 150 and x > RESTART_X and y <= RESTART_Y + 40 and y > RESTART_Y
 end

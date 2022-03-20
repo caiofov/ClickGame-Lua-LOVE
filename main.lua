@@ -4,7 +4,10 @@ require "gameFunctions"
 -- LOVE2D FUNCTIONS - - -- - - -
 
 function love.load() --runs imediately when the game loads (setups)
+    --setting constrains
     MAX_RADIUS = 50
+    RESTART_X = love.graphics.getWidth()/2 - 100
+    RESTART_Y = love.graphics.getHeight()/2 + 50
     
     -- fontsizes
     gameFont = love.graphics.newFont(40) 
@@ -37,7 +40,7 @@ end
 
 function love.draw() --draws on the screen (similar to update, but involving graphics)
     if run then
-        love.graphics.setColor(0.5,0.5,0) --sets the color of the following shapes
+        love.graphics.setColor(math.random() + math.random(0, 1),math.random() + math.random(0, 1), math.random() + math.random(0, 1)) --sets the color of the following shapes
         
         for key, target in pairs(targets) do
             love.graphics.circle("fill", target.x, target.y, target.radius)
@@ -50,40 +53,48 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         love.graphics.print("Score: " .. tostring(score), 0, 0) --prints the value of score
         love.graphics.print("Health: " .. tostring(health), 0, 45)
     
-    else
+    else --game over screen
+        love.graphics.setColor(1,1,1)
         love.graphics.setFont(gameOverFont)
         love.graphics.print("GAME OVER :(", 50, love.graphics.getHeight()/2 - 100)
         
         love.graphics.setFont(gameFont)
         love.graphics.print("Score: " .. tostring(score), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2)
+        
+        restartButton() --drawing restart BUTTON
     end
 end
 
 function love.mousepressed(x, y, button, istouch, pressed) --runs this function when the mouse is pressed
     --istouch and pressed are for mobile devices
-    if run then
-        if button == 1 then --left button
-            local clickedProperly = false --tells if the player has clicked inside any circle
-            
-            for key, target in pairs(targets) do
+    if button == 1 then --left button
+        if run then
+                local clickedProperly = false --tells if the player has clicked inside any circle
                 
-                local mouseToTarget = distanceBetween(target.x, target.y, x, y)
-                
-                if mouseToTarget < target.radius then
-                    clickedProperly = true
+                for key, target in pairs(targets) do
                     
-                    --increases the score and the speed
-                    score = score + 1
-                    speed = speed + 0.1
+                    local mouseToTarget = distanceBetween(target.x, target.y, x, y)
                     
-                    table.remove(targets, key) --removes the current target from the list
-                    createNewTarget() --creates a new target
-                    break
+                    if mouseToTarget <= target.radius then
+                        clickedProperly = true
+                        
+                        --increases the score and the speed
+                        score = score + 1
+                        speed = speed + 0.1
+                        
+                        table.remove(targets, key) --removes the current target from the list
+                        createNewTarget() --creates a new target
+                        break
+                    end
                 end
-            end
 
-            if not clickedProperly then -- decreases health, because the player didn't click properly
-                health = health - 1
+                if not clickedProperly then -- decreases health, because the player didn't click properly
+                    health = health - 1
+                end
+            
+        else
+            if isOverRestartButton(x, y) then --restarts the game
+                configGame()
             end
         end
     end
