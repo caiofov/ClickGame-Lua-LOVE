@@ -11,7 +11,7 @@ function createButtons()
     restartButton.action = configGame
 
     startButton = {}
-    startButton.x = love.graphics.getWidth()/2 - 90
+    startButton.x = love.graphics.getWidth()/2 - 70
     startButton.y = love.graphics.getHeight()/2 + 125
     startButton.paddingY = 50
     startButton.paddingX = 100
