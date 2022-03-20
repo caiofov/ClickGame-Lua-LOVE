@@ -10,7 +10,20 @@ function configGame() --reset all variables to their initial values
 
     color = newRandomColor()
 
-    run = false --game's runnings
+    loadHighestScore()
+    isHighest = false
+
+    run = true --game's runnings
+end
+
+function configGameOver()
+    run = false --stop running the game itself
+    targets = {} --deletes all targets
+    
+    if score > HIGHEST_SCORE then
+        saveHighestScore(score)
+        isHighest = true
+    end
 end
 
 function createNewTarget() --generates new position for a new target
@@ -24,16 +37,13 @@ function createNewTarget() --generates new position for a new target
     table.insert(targets, newTarget)
 end
 
-function move(t) --moves the target
-    t.y = t.y + speed
-end
 
-function newRandomColor()
+function newRandomColor() --creates a new color
     local newColor = {}
     newColor.r = math.random() + math.random(0, 1)
     newColor.g = math.random() + math.random(0, 1)
     newColor.b = math.random() + math.random(0, 1)
-    newColor.count = 0
+    newColor.count = 0 --a "timer" for changing the color
     
     return newColor
 end
@@ -61,12 +71,14 @@ end
 
 function loadHighestScore() --loads the highest score from the file
     local file = io.open("highest_score.txt", "r")
-    return tonumber(file:read("*all"))
+    HIGHEST_SCORE = tonumber(file:read("*all"))
+    file:close()
 end
 
 function saveHighestScore(new_record) --saves the highest score
     local file = io.open("highest_score.txt", "w")
     file:write(new_record)
+    file:close()
 end
 
 

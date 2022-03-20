@@ -9,9 +9,6 @@ function love.load() --runs imediately when the game loads (setups)
     --restart button coordinates
     RESTART_X = love.graphics.getWidth()/2 - 90
     RESTART_Y = love.graphics.getHeight()/2 + 125
-
-    
-    HIGHEST_SCORE = loadHighestScore()
     
     -- fontsizes
     gameFont = love.graphics.newFont(40) 
@@ -22,12 +19,11 @@ end
 
 function love.update(dt) --game loop
     if health <=0 then
-        run = false
-        targets = {} --deletes all targets
+        configGameOver()
     end
     if run then
         for key, target in pairs(targets) do
-            move(target)
+            target.y = target.y + speed --moves the target
             
             if target.y > love.graphics.getHeight() + target.radius then --if the target is out of the screen
                 health = health - 1 --decreases the health
@@ -58,7 +54,6 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         love.graphics.print("Health: " .. tostring(health), 0, 45)
     
     else --game over screen
-        score_saved = false
         love.graphics.setColor(1,1,1)
         love.graphics.setFont(gameOverFont)
         
@@ -67,15 +62,9 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         love.graphics.setFont(gameFont)
         love.graphics.print("Score: " .. tostring(score), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 25)
         
-        if score > HIGHEST_SCORE then
+        if isHighest then
             changeColor()
             love.graphics.print("New record!", love.graphics.getWidth()/2 - 130, love.graphics.getHeight()/2 + 75)
-            
-            if not score_saved then
-                saveHighestScore(score)
-                score_saved = true
-            end
-        
         else
             love.graphics.print("Highest score: " .. tostring(HIGHEST_SCORE), love.graphics.getWidth()/2 - 170, love.graphics.getHeight()/2 + 75)
         end
