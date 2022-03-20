@@ -5,14 +5,18 @@ require "gameFunctions"
 
 function love.load() --runs imediately when the game loads (setups)
     --setting constrains
-    MAX_RADIUS = 50
+    MAX_RADIUS = 50 --max circle radius
+    --restart button coordinates
     RESTART_X = love.graphics.getWidth()/2 - 100
-    RESTART_Y = love.graphics.getHeight()/2 + 50
+    RESTART_Y = love.graphics.getHeight()/2 + 100
+
+    
+    HIGHEST_SCORE = loadHighestScore()
     
     -- fontsizes
     gameFont = love.graphics.newFont(40) 
     gameOverFont = love.graphics.newFont(100)
-    
+
     configGame()
 end
 
@@ -40,7 +44,7 @@ end
 
 function love.draw() --draws on the screen (similar to update, but involving graphics)
     if run then
-        love.graphics.setColor(math.random() + math.random(0, 1),math.random() + math.random(0, 1), math.random() + math.random(0, 1)) --sets the color of the following shapes
+        changeColor()
         
         for key, target in pairs(targets) do
             love.graphics.circle("fill", target.x, target.y, target.radius)
@@ -54,12 +58,26 @@ function love.draw() --draws on the screen (similar to update, but involving gra
         love.graphics.print("Health: " .. tostring(health), 0, 45)
     
     else --game over screen
+        score_saved = false
         love.graphics.setColor(1,1,1)
         love.graphics.setFont(gameOverFont)
         love.graphics.print("GAME OVER :(", 50, love.graphics.getHeight()/2 - 100)
         
         love.graphics.setFont(gameFont)
         love.graphics.print("Score: " .. tostring(score), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2)
+        
+        if score > HIGHEST_SCORE then
+            changeColor()
+            love.graphics.print("New record!", love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 50)
+            
+            if not score_saved then
+                saveHightesScore(score)
+            end
+        
+        else
+            love.graphics.print("Highest score: " .. tostring(HIGHEST_SCORE), love.graphics.getWidth()/2 - 100, love.graphics.getHeight()/2 + 50)
+        end
+        
         
         restartButton() --drawing restart BUTTON
     end

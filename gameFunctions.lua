@@ -1,11 +1,16 @@
 -- MY FUNCTIONS - - - -- - - -- 
+function configGame() --reset all variables to their initial values
+    love.mouse.setCursor() --sets cursor to default
+    targets = {}
+    createNewTarget() --generates a new target in a random position
 
-function move(t) --moves the target
-    t.y = t.y + speed
-end
+    score = 1
+    health = 5
+    speed = 2
 
-function distanceBetween (x1,y1,x2,y2) --distance between two points
-    return math.sqrt(((x2-x1)^2) +((y2-y1)^2))
+    color = newRandomColor()
+
+    run = true --game's runnings
 end
 
 function createNewTarget() --generates new position for a new target
@@ -19,16 +24,18 @@ function createNewTarget() --generates new position for a new target
     table.insert(targets, newTarget)
 end
 
-function configGame() --reset all variables to their initial values
-    love.mouse.setCursor() --sets cursor to default
-    targets = {}
-    createNewTarget() --generates a new target in a random position
+function move(t) --moves the target
+    t.y = t.y + speed
+end
 
-    score = 0
-    health = 5
-    speed = 2
-
-    run = true --game's runnings
+function newRandomColor()
+    local newColor = {}
+    newColor.r = math.random() + math.random(0, 1)
+    newColor.g = math.random() + math.random(0, 1)
+    newColor.b = math.random() + math.random(0, 1)
+    newColor.count = 0
+    
+    return newColor
 end
 
 function restartButton() --draws restart button
@@ -46,4 +53,28 @@ end
 
 function isOverRestartButton(x, y) -- checks if the given coordinate is inside the restart button
     return x <= RESTART_X + 150 and x > RESTART_X and y <= RESTART_Y + 40 and y > RESTART_Y
+end
+
+function distanceBetween (x1,y1,x2,y2) --distance between two points
+    return math.sqrt(((x2-x1)^2) +((y2-y1)^2))
+end
+
+function loadHighestScore() --loads the highest score from the file
+    local file = io.open("highest_score.txt", "r")
+    return tonumber(file:read("*all"))
+end
+
+function saveHightesScore(new_record) --saves the highest score
+    local file = io.open("highest_score.txt", "w")
+    file:write(new_record)
+end
+
+
+function changeColor() --changes the color randomly
+    if color.count > 20 then
+        color = newRandomColor()
+    else
+        color.count = color.count + 1
+    end
+    love.graphics.setColor(color.r,color.g, color.b)
 end
